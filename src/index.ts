@@ -3,20 +3,34 @@ import pino from 'pino'
 import { structuredLogger, type StructuredLoggerEnv } from '@hono/structured-logger'
 import { getHealthRoute, queryRoute } from './routes/query'
 import { azureWorkspaceConnection } from './credentials'
+import type { AzureMachineLearningServicesManagementClient } from '@azure/arm-machinelearning'
 
+type AppEnv = StructuredLoggerEnv<pino.Logger> & {
+    Variables: {
+        azureClient: AzureMachineLearningServicesManagementClient
+    }
+}
 
 const rootLogger = pino()
+const app = new OpenAPIHono<AppEnv>()
 
 // before startup of application, ensure azure client creates successfully
-rootLogger.info("Checking azure config requirements...")
-const azureClient = azureWorkspaceConnection(rootLogger)
+let azureClientInstance: AzureMachineLearningServicesManagementClient
 
-if (!azureClient) {
-    rootLogger.fatal("CONFIG FAILURE: Missing required subscription ID to connect to Azure ML")
+try {
+    azureClientInstance = await azureWorkspaceConnection(rootLogger)
+} catch (error) {
+    rootLogger.fatal(
+        { err: error instanceof Error ? error.message : error },
+        "❌ STARTUP ABORTED: Live network validation to Azure ML failed. Exiting process!"
+    )
     process.exit(1)
 }
 
-const app = new OpenAPIHono<StructuredLoggerEnv<pino.Logger>>()
+app.use("*", async (c, next) => {
+    c.set('azureClient', azureClientInstance)
+    await next()
+})
 
 app.use(
     structuredLogger({
@@ -44,6 +58,6 @@ app.openapi(queryRoute, (c) => {
     return c.json({ answer: `Processed your question: "${question}"` }, 200)
 })
 
-app.doc('/doc', { openapi: '3.0.0', info: { title: 'My API', version: '1.0.0' } })
+app.doc('/doc', { openapi: '3.0.0', info: { title: 'Azure ML Agent API', version: '1.0.0' } })
 
 export default app
