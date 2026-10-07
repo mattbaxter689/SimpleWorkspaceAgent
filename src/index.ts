@@ -2,10 +2,21 @@ import { OpenAPIHono } from '@hono/zod-openapi'
 import pino from 'pino'
 import { structuredLogger, type StructuredLoggerEnv } from '@hono/structured-logger'
 import { getHealthRoute, queryRoute } from './routes/query'
+import { azureWorkspaceConnection } from './credentials'
 
-const app = new OpenAPIHono<StructuredLoggerEnv<pino.Logger>>()
 
 const rootLogger = pino()
+
+// before startup of application, ensure azure client creates successfully
+rootLogger.info("Checking azure config requirements...")
+const azureClient = azureWorkspaceConnection(rootLogger)
+
+if (!azureClient) {
+    rootLogger.fatal("CONFIG FAILURE: Missing required subscription ID to connect to Azure ML")
+    process.exit(1)
+}
+
+const app = new OpenAPIHono<StructuredLoggerEnv<pino.Logger>>()
 
 app.use(
     structuredLogger({
