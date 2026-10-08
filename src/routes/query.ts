@@ -13,7 +13,7 @@ export const getHealthRoute = createRoute({
 
 export const queryRoute = createRoute({
     method: "post",
-    path: "/query",
+    path: "/api/chat",
     request: {
         body: {
             content: {
