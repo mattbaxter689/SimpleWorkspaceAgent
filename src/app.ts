@@ -1,7 +1,8 @@
 import { OpenAPIHono } from '@hono/zod-openapi'
+import { swaggerUI } from '@hono/swagger-ui'
 import pino from 'pino'
 import { structuredLogger, type StructuredLoggerEnv } from '@hono/structured-logger'
-import { getHealthRoute, queryRoute } from './routes/query'
+import { getHealthRoute, chatRoute } from './routes/openapi_routes'
 import type { AzureMachineLearningServicesManagementClient } from '@azure/arm-machinelearning'
 import { getAzureClient } from './credentials'
 
@@ -35,7 +36,7 @@ app.openapi(getHealthRoute, (c) => {
     }, 200)
 })
 
-app.openapi(queryRoute, (c) => {
+app.openapi(chatRoute, (c) => {
     const { question } = c.req.valid('json')
 
     const client = getAzureClient()
@@ -44,6 +45,7 @@ app.openapi(queryRoute, (c) => {
 })
 
 app.doc('/doc', { openapi: '3.0.0', info: { title: 'Azure ML Agent API', version: '1.0.0' } })
+app.get("/swag", swaggerUI({ url: "/doc" }))
 
 export default app
 
