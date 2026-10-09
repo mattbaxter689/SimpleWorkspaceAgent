@@ -3,7 +3,8 @@ import { z } from 'zod'
 const envSchema = z.object({
     AZURE_SUBSCRIPTION_ID: z.string().min(1, "Subscription ID is required"),
     AZURE_RESOURCE_GROUP: z.string().min(1, "Resource Group is required"),
-    AZURE_WORKSPACE_NAME: z.string().min(1, "Workspace Name is rquired")
+    AZURE_WORKSPACE_NAME: z.string().min(1, "Workspace Name is rquired"),
+    GEMINI_API_KEY: z.string().min(1, "The Google API key")
 })
 
 const result = envSchema.safeParse(process.env)
@@ -16,4 +17,4 @@ if (!result.success) {
 }
 
 export type EnvConfig = z.infer<typeof envSchema>
-export const config = result.data
+export const envConfig = result.data
