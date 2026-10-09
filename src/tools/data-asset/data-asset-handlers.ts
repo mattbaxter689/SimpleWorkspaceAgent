@@ -1,4 +1,4 @@
-import type { AzureContext } from "../types";
+import type { AzureContext } from "../toolFactory";
 
 export async function handleListDataAssets(ctx: AzureContext) {
     const assets = []
