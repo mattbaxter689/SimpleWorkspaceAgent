@@ -1,7 +1,7 @@
 import { DefaultAzureCredential } from "@azure/identity";
 import { AzureMachineLearningServicesManagementClient } from "@azure/arm-machinelearning";
 import type { Logger } from "pino";
-import { config } from "./config/env_config";
+import { envConfig } from "./config/env_config";
 
 let clientInstance: AzureMachineLearningServicesManagementClient | null = null
 
@@ -21,13 +21,13 @@ export async function initAzureWorkspaceConnection(logger: Logger): Promise<Azur
 
     const credential = new DefaultAzureCredential()
     const client = new AzureMachineLearningServicesManagementClient(
-        credential, config.AZURE_SUBSCRIPTION_ID
+        credential, envConfig.AZURE_SUBSCRIPTION_ID
     )
 
     log.info("Client connection successful")
 
     //perform small ping test to ensure connection
-    const workspace = await client.workspaces.get(config.AZURE_RESOURCE_GROUP, config.AZURE_WORKSPACE_NAME)
+    const workspace = await client.workspaces.get(envConfig.AZURE_RESOURCE_GROUP, envConfig.AZURE_WORKSPACE_NAME)
     log.info({ workspaceName: workspace.name }, "Workspace ping test successful");
 
     clientInstance = client;
