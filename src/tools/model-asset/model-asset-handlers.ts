@@ -1,10 +1,28 @@
 import type { AzureContext } from "../toolFactory";
-import type { ListModelAssetOutput } from "./model-asset-schemas";
+import type { GetLatestModelAssetInput, ListModelAssetOutput, ModelAssetOutput } from "./model-asset-schemas";
+
+// Helper to detect auto-generated run IDs, UUIDs, or hashes
+function shouldExcludeModel(name: string): boolean {
+    // Exclude Azure ML / MLflow auto-logged run artifacts
+    if (name.startsWith("azureml_") && (name.includes("mlflow") || name.includes("output"))) {
+        return true;
+    }
+
+    // Exclude raw UUIDs or hex hashes
+    const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    return uuidPattern.test(name);
+}
 
 export async function handleListModelAssets(ctx: AzureContext): Promise<ListModelAssetOutput> {
     const latestModels: ListModelAssetOutput = []
 
     for await (const model of ctx.client.modelContainers.list(ctx.resourceGroup, ctx.workspaceName)) {
+        const name = model?.name ?? ""
+
+        if (shouldExcludeModel(name)) {
+            continue
+        }
+
         latestModels.push({
             name: model?.name,
             latestVersion: model?.properties?.latestVersion,
@@ -15,4 +33,17 @@ export async function handleListModelAssets(ctx: AzureContext): Promise<ListMode
     }
 
     return latestModels
+}
+
+export async function handleGetLatestModelAsset(ctx: AzureContext, params: GetLatestModelAssetInput): Promise<ModelAssetOutput> {
+
+    const model = await ctx.client.modelContainers.get(ctx.resourceGroup, ctx.workspaceName, params.name)
+
+    return {
+        name: model?.name,
+        latestVersion: model?.properties?.latestVersion,
+        isArchived: model?.properties?.isArchived,
+        tags: model?.properties?.tags,
+        createdAt: model.systemData?.createdAt?.toISOString()
+    }
 }
