@@ -1,6 +1,7 @@
 import type { AzureContext } from "../toolFactory";
 import type { GetLatestDataAssetInput, GetLatestDataAssetOutput, ListDataAssetOutput } from "./data-asset-schemas";
 
+// Fetches all data assets in the current workspace
 export async function handleListDataAssets(ctx: AzureContext): Promise<ListDataAssetOutput> {
     const assets: ListDataAssetOutput = []
     for await (const a of ctx.client.dataContainers.list(ctx.resourceGroup, ctx.workspaceName)) {
@@ -9,6 +10,7 @@ export async function handleListDataAssets(ctx: AzureContext): Promise<ListDataA
     return assets
 }
 
+// Fetches latest version for the specified data asset
 export async function handleGetLatestDataAsset(
     ctx: AzureContext,
     params: GetLatestDataAssetInput
@@ -39,3 +41,5 @@ export async function handleGetLatestDataAsset(
         createdAt: latest?.systemData?.createdAt?.toISOString()
     }
 }
+
+//TODO: implement fetch for all versions of named data asset
