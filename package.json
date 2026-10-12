@@ -7,7 +7,7 @@
     "@types/bun": "latest"
   },
   "scripts": {
-    "start": "bun run src/index.ts"
+    "start": "bun --watch run src/index.ts"
   },
   "peerDependencies": {
     "typescript": "^7"
