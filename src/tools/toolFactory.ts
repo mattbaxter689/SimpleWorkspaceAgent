@@ -1,5 +1,6 @@
 import { AzureMachineLearningServicesManagementClient } from "@azure/arm-machinelearning";
 import { createDataAssetTools } from "./data-asset";
+import { createModelAssetTools } from "./model-asset";
 
 export interface AzureContext {
     client: AzureMachineLearningServicesManagementClient,
@@ -13,6 +14,7 @@ interface MegaToolFactoryDeps {
 
 export function createAllTools({ azureCtx }: MegaToolFactoryDeps) {
     return {
-        ...createDataAssetTools(azureCtx)
+        ...createDataAssetTools(azureCtx),
+        ...createModelAssetTools(azureCtx)
     }
 }
