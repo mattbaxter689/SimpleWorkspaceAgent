@@ -13,6 +13,7 @@ function shouldExcludeModel(name: string): boolean {
     return uuidPattern.test(name);
 }
 
+// Fetches any named and registered model asset in the workspace
 export async function handleListModelAssets(ctx: AzureContext): Promise<ListModelAssetOutput> {
     const latestModels: ListModelAssetOutput = []
 
@@ -35,6 +36,7 @@ export async function handleListModelAssets(ctx: AzureContext): Promise<ListMode
     return latestModels
 }
 
+// Fetches information on a single specified asset in the workspace
 export async function handleGetLatestModelAsset(ctx: AzureContext, params: GetLatestModelAssetInput): Promise<ModelAssetOutput> {
 
     const model = await ctx.client.modelContainers.get(ctx.resourceGroup, ctx.workspaceName, params.name)
@@ -47,3 +49,5 @@ export async function handleGetLatestModelAsset(ctx: AzureContext, params: GetLa
         createdAt: model.systemData?.createdAt?.toISOString()
     }
 }
+
+// TODO: implement function to fetch all versions for single specified asset

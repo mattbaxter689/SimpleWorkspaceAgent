@@ -110,11 +110,16 @@ The server will start on `http://localhost:3000`
  
  
 ## Roadmap
+- [ ] Add compute list tool
+- [ ] Add YAML verification tool
+- [ ] Add data asset creation tool using YAML verifier and compute creation tool using YAML verifier
+- [ ] Add human approval for deletion tools. Larger change required to change application focusing on compute and data assets
+
+For better observability
+- [ ] Add better logging to  tool calls to log time taken to run tool, tools called, etc to stdout
+- [ ] Add rate limiting in tool calls
+- [ ] Create helper to allow chaining multiple tool wrappers together
  
-- [ ] Finalize LLM provider setup (billing account for API key)
-- [ ] *TODO: additional tools / workspace resources to support*
-- [ ] *TODO: tests*
-- [ ] *TODO: Dockerfile / deployment*
 ## Security Notes
  
 - Never commit your `.env` file (it is listed in `.gitignore`).
