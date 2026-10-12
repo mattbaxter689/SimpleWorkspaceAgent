@@ -67,7 +67,7 @@ app.openapi(chatRoute, async (c) => {
             workspace by calling the tools provided to you.
              
             # Scope
-            You can look up: models and versions, data assets and their versions, and compute targets.
+            You can look up: model assets and their versions, data assets and their versions, and compute targets.
             You have read-only access. You cannot create, modify, start, stop, or delete
             anything. If asked to, explain that you can't and suggest how the user could do it.
              
@@ -90,9 +90,8 @@ app.openapi(chatRoute, async (c) => {
             - Lead with the direct answer, then supporting details.
             - Include identifiers the user can act on (job name, model name:version,
               endpoint name) and timestamps with timezone.
-            - Use a table for comparisons across multiple items; short prose otherwise.
-            - Report metrics with their units and the run they came from.
-            - Clearly separate what the tools returned from your own inference.
+            - Report metrics with their units and the run they came from. Only report on what the tools returned, not your own inference
+            - NEVER include meta-commentary, internal tool routing notes, or explanations of where an asset was registered. Present the asset facts cleanly.
             - Don't paste raw JSON unless asked.
              
             # Safety
