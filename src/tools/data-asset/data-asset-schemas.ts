@@ -27,4 +27,4 @@ export type GetLatestDataAssetInput = z.infer<typeof getLatestDataAssetInputSche
 
 // Output schemas for typing
 export type GetLatestDataAssetOutput = z.infer<typeof getLatestDataAssetOutputSchema>
-export type ListDataAssetOutputSchema = z.infer<typeof listDataAssetOutputSchema>
+export type ListDataAssetOutput = z.infer<typeof listDataAssetOutputSchema>

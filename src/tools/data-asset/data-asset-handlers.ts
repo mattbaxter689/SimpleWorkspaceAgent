@@ -1,9 +1,8 @@
 import type { AzureContext } from "../toolFactory";
-import type { GetLatestDataAssetInput, GetLatestDataAssetOutput, ListDataAssetOutputSchema } from "./data-asset-schemas";
-import type { DataVersionBase } from "@azure/arm-machinelearning";
+import type { GetLatestDataAssetInput, GetLatestDataAssetOutput, ListDataAssetOutput } from "./data-asset-schemas";
 
-export async function handleListDataAssets(ctx: AzureContext): Promise<ListDataAssetOutputSchema> {
-    const assets = []
+export async function handleListDataAssets(ctx: AzureContext): Promise<ListDataAssetOutput> {
+    const assets: ListDataAssetOutput = []
     for await (const a of ctx.client.dataContainers.list(ctx.resourceGroup, ctx.workspaceName)) {
         assets.push({ name: a.name, id: a.id })
     }
@@ -14,7 +13,7 @@ export async function handleGetLatestDataAsset(
     ctx: AzureContext,
     params: GetLatestDataAssetInput
 ): Promise<GetLatestDataAssetOutput> {
-    const versions: DataVersionBase[] = []
+    const versions = []
 
     for await (const version of ctx.client.dataVersions.list(ctx.resourceGroup, ctx.workspaceName, params.name)) {
         versions.push(version)
