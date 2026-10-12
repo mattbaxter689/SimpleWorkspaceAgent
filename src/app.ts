@@ -1,5 +1,5 @@
 import { createGoogle } from '@ai-sdk/google'
-import { generateText, stepCountIs } from 'ai'
+import { generateText, stepCountIs, Output } from 'ai'
 import { OpenAPIHono } from '@hono/zod-openapi'
 import { swaggerUI } from '@hono/swagger-ui'
 import pino from 'pino'
@@ -62,6 +62,7 @@ app.openapi(chatRoute, async (c) => {
 
     const { text } = await generateText({
         model: google("gemini-3.5-flash-lite"),
+        output: Output.text(),
         instructions: `You are an assistant that answers questions about an Azure Machine Learning
             workspace by calling the tools provided to you.
              
