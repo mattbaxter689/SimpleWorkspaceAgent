@@ -6,7 +6,7 @@ import { handleGetLatestDataAsset, handleListDataAssets } from "./data-asset-han
 
 export const createDataAssetTools = (ctx: AzureContext) => ({
     listDataAssets: tool({
-        description: "Lists registered data assets in the workspace",
+        description: "Lists registered data assets in the workspace and their id",
         inputSchema: z.object({}),
         outputSchema: listDataAssetOutputSchema,
         execute: () => handleListDataAssets(ctx)
