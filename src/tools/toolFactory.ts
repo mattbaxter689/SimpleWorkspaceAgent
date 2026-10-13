@@ -1,20 +1,14 @@
-import { AzureMachineLearningServicesManagementClient } from "@azure/arm-machinelearning";
 import { createDataAssetTools } from "./data-asset";
 import { createModelAssetTools } from "./model-asset";
+import { createComputeReadTools } from "./compute";
+import type { ToolDeps } from "./types";
+import type { ToolSet } from "ai";
 
-export interface AzureContext {
-    client: AzureMachineLearningServicesManagementClient,
-    resourceGroup: string,
-    workspaceName: string
-}
 
-interface MegaToolFactoryDeps {
-    azureCtx: AzureContext
-}
-
-export function createAllTools({ azureCtx }: MegaToolFactoryDeps) {
+export function createAllTools(deps: ToolDeps): ToolSet {
     return {
-        ...createDataAssetTools(azureCtx),
-        ...createModelAssetTools(azureCtx)
+        ...createDataAssetTools(deps),
+        ...createModelAssetTools(deps),
+        ...createComputeReadTools(deps)
     }
 }

@@ -1,8 +1,8 @@
-import type { AzureContext } from "../toolFactory";
+import type { AzureCtx } from "../types";
 import type { GetLatestDataAssetInput, GetLatestDataAssetOutput, ListDataAssetOutput } from "./data-asset-schemas";
 
 // Fetches all data assets in the current workspace
-export async function handleListDataAssets(ctx: AzureContext): Promise<ListDataAssetOutput> {
+export async function handleListDataAssets(ctx: AzureCtx): Promise<ListDataAssetOutput> {
     const assets: ListDataAssetOutput = []
     for await (const a of ctx.client.dataContainers.list(ctx.resourceGroup, ctx.workspaceName)) {
         assets.push({ name: a.name, id: a.id })
@@ -12,7 +12,7 @@ export async function handleListDataAssets(ctx: AzureContext): Promise<ListDataA
 
 // Fetches latest version for the specified data asset
 export async function handleGetLatestDataAsset(
-    ctx: AzureContext,
+    ctx: AzureCtx,
     params: GetLatestDataAssetInput
 ): Promise<GetLatestDataAssetOutput> {
     const versions = []

@@ -1,4 +1,4 @@
-import type { AzureContext } from "../toolFactory";
+import type { AzureCtx } from "../types";
 import type { GetLatestModelAssetInput, ListModelAssetOutput, ModelAssetOutput } from "./model-asset-schemas";
 
 // Helper to detect auto-generated run IDs, UUIDs, or hashes
@@ -14,7 +14,7 @@ function shouldExcludeModel(name: string): boolean {
 }
 
 // Fetches any named and registered model asset in the workspace
-export async function handleListModelAssets(ctx: AzureContext): Promise<ListModelAssetOutput> {
+export async function handleListModelAssets(ctx: AzureCtx): Promise<ListModelAssetOutput> {
     const latestModels: ListModelAssetOutput = []
 
     for await (const model of ctx.client.modelContainers.list(ctx.resourceGroup, ctx.workspaceName)) {
@@ -37,7 +37,7 @@ export async function handleListModelAssets(ctx: AzureContext): Promise<ListMode
 }
 
 // Fetches information on a single specified asset in the workspace
-export async function handleGetLatestModelAsset(ctx: AzureContext, params: GetLatestModelAssetInput): Promise<ModelAssetOutput> {
+export async function handleGetLatestModelAsset(ctx: AzureCtx, params: GetLatestModelAssetInput): Promise<ModelAssetOutput> {
 
     const model = await ctx.client.modelContainers.get(ctx.resourceGroup, ctx.workspaceName, params.name)
 
