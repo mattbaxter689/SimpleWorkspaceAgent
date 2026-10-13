@@ -104,7 +104,7 @@ The server will start on `http://localhost:3000`
  
 | Command | Description |
 | --- | --- |
-| `bun install` | Install dependencies |
+| `bun install` | Install dependencies |:questions
 | `bun start` | Run the server (`bun run src/index.ts`) |
 | `just run` | Same as `bun start`, with `.env` loaded |
  
@@ -119,6 +119,9 @@ For better observability
 - [ ] Add better logging to  tool calls to log time taken to run tool, tools called, etc to stdout
 - [ ] Add rate limiting in tool calls
 - [ ] Create helper to allow chaining multiple tool wrappers together
+
+For Development
+- [ ] Deploy to azure container apps
  
 ## Security Notes
  
