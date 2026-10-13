@@ -29,7 +29,10 @@ export const chatRoute = createRoute({
         200: {
             content: {
                 "application/json": {
-                    schema: z.object({ answer: z.string() }),
+                    schema: z.object({
+                        answer: z.string(),
+                        toolsCalled: z.array(z.string()).openapi({ description: 'Tools the agent called, in order' }),
+                    }),
                 },
             },
             description: "Answer to the users question with the agent response"
