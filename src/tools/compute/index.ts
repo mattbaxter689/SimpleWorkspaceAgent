@@ -1,2 +1,2 @@
 export { createComputeReadTools } from "./compute-read-tools";
-export * from './compute-schemas' 
+export * from "./compute-schemas";

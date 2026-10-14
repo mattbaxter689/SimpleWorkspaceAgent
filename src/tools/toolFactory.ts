@@ -1,16 +1,16 @@
-import { createDataAssetTools } from "./data-asset";
-import { createModelAssetTools } from "./model-asset";
-import { createComputeReadTools } from "./compute";
-import type { ToolDeps } from "./types";
 import type { ToolSet } from "ai";
-import { createJobTools } from "./jobs";
 
+import { createComputeReadTools } from "./compute";
+import { createDataAssetTools } from "./data-asset";
+import { createJobTools } from "./jobs";
+import { createModelAssetTools } from "./model-asset";
+import type { ToolDeps } from "./types";
 
 export function createAllTools(deps: ToolDeps): ToolSet {
-    return {
-        ...createDataAssetTools(deps),
-        ...createModelAssetTools(deps),
-        ...createComputeReadTools(deps),
-        ...createJobTools(deps)
-    }
+  return {
+    ...createDataAssetTools(deps),
+    ...createModelAssetTools(deps),
+    ...createComputeReadTools(deps),
+    ...createJobTools(deps),
+  };
 }
