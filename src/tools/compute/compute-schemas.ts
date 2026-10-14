@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-export const computeSummaryOutputSchema = z.object({
+export const computeSummarySchema = z.object({
     found: z.boolean().optional(),
     name: z.string().optional(),
     type: z.string().optional(),
@@ -11,11 +11,11 @@ export const computeSummaryOutputSchema = z.object({
     maxNodes: z.number().optional(),
     currentNodes: z.number().optional()
 })
-export const listComputeSummaryOutputSchema = z.array(computeSummaryOutputSchema)
-export type ListComputeSummaryOutput = z.infer<typeof listComputeSummaryOutputSchema>
-export type ComputeSummaryOutput = z.infer<typeof computeSummaryOutputSchema>
+export const listComputeSummarySchema = z.array(computeSummarySchema)
+export type ListComputeSummary = z.infer<typeof listComputeSummarySchema>
+export type ComputeSummary = z.infer<typeof computeSummarySchema>
 
-export const getComputeInputSchema = z.object({
+export const getComputeSchema = z.object({
     name: z.string().describe("The name of the compute target to fetch information for")
 })
-export type GetComputeInput = z.infer<typeof getComputeInputSchema>
+export type GetComputeInput = z.infer<typeof getComputeSchema>

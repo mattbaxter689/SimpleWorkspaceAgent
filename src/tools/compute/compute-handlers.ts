@@ -1,8 +1,8 @@
 import type { AzureCtx } from "../types";
-import type { ListComputeSummaryOutput, ComputeSummaryOutput, GetComputeInput } from "./compute-schemas";
+import type { ListComputeSummary, ComputeSummary, GetComputeInput } from "./compute-schemas";
 
-export async function handleListComputes(ctx: AzureCtx, max: number = 100): Promise<ListComputeSummaryOutput> {
-    const computes: ListComputeSummaryOutput = []
+export async function handleListComputes(ctx: AzureCtx, max: number = 100): Promise<ListComputeSummary> {
+    const computes: ListComputeSummary = []
 
     for await (const compute of ctx.client.computeOperations.list(ctx.resourceGroup, ctx.workspaceName)) {
         const baseProps: any = compute.properties;
@@ -30,7 +30,7 @@ export async function handleListComputes(ctx: AzureCtx, max: number = 100): Prom
     return computes;
 }
 
-export async function handleGetComputeState(ctx: AzureCtx, params: GetComputeInput): Promise<ComputeSummaryOutput> {
+export async function handleGetComputeState(ctx: AzureCtx, params: GetComputeInput): Promise<ComputeSummary> {
     try {
         const compute = await ctx.client.computeOperations.get(ctx.resourceGroup, ctx.workspaceName, params.name)
         const baseProps: any = compute.properties;

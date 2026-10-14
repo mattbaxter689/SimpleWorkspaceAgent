@@ -1,5 +1,5 @@
 import type { AzureCtx } from "../types";
-import type { GetLatestModelAssetInput, ListModelAssetOutput, ModelAssetOutput } from "./model-asset-schemas";
+import type { GetLatestModelAsset, ListModelAsset, ModelAsset } from "./model-asset-schemas";
 
 // Helper to detect auto-generated run IDs, UUIDs, or hashes
 function shouldExcludeModel(name: string): boolean {
@@ -14,8 +14,8 @@ function shouldExcludeModel(name: string): boolean {
 }
 
 // Fetches any named and registered model asset in the workspace
-export async function handleListModelAssets(ctx: AzureCtx): Promise<ListModelAssetOutput> {
-    const latestModels: ListModelAssetOutput = []
+export async function handleListModelAssets(ctx: AzureCtx): Promise<ListModelAsset> {
+    const latestModels: ListModelAsset = []
 
     for await (const model of ctx.client.modelContainers.list(ctx.resourceGroup, ctx.workspaceName)) {
         const name = model?.name ?? ""
@@ -37,7 +37,7 @@ export async function handleListModelAssets(ctx: AzureCtx): Promise<ListModelAss
 }
 
 // Fetches information on a single specified asset in the workspace
-export async function handleGetLatestModelAsset(ctx: AzureCtx, params: GetLatestModelAssetInput): Promise<ModelAssetOutput> {
+export async function handleGetLatestModelAsset(ctx: AzureCtx, params: GetLatestModelAsset): Promise<ModelAsset> {
 
     const model = await ctx.client.modelContainers.get(ctx.resourceGroup, ctx.workspaceName, params.name)
 

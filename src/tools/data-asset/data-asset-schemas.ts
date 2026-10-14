@@ -2,19 +2,19 @@ import { z } from 'zod'
 
 
 // Tool input types
-export const getLatestDataAssetInputSchema = z.object({
+export const getLatestDataAssetName = z.object({
     name: z.string().describe("The name of the data asset")
 })
 
 // Tool output types
-export const listDataAssetOutputSchema = z.array(
+export const listDataAssetSchema = z.array(
     z.object({
         name: z.string().optional(),
         id: z.string().optional()
     })
 )
 
-export const getLatestDataAssetOutputSchema = z.object({
+export const getLatestDataAssetSchema = z.object({
     version: z.string(),
     name: z.string().optional(),
     description: z.string().optional(),
@@ -23,8 +23,8 @@ export const getLatestDataAssetOutputSchema = z.object({
 })
 
 // Input Schemas for typing
-export type GetLatestDataAssetInput = z.infer<typeof getLatestDataAssetInputSchema>
+export type GetLatestDataAssetName = z.infer<typeof getLatestDataAssetName>
 
 // Output schemas for typing
-export type GetLatestDataAssetOutput = z.infer<typeof getLatestDataAssetOutputSchema>
-export type ListDataAssetOutput = z.infer<typeof listDataAssetOutputSchema>
+export type GetLatestDataAsset = z.infer<typeof getLatestDataAssetSchema>
+export type ListDataAsset = z.infer<typeof listDataAssetSchema>

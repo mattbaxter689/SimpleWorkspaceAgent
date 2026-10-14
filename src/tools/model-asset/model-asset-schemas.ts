@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-export const modelAssetOutputSchema = z.object({
+export const modelAssetSchema = z.object({
     name: z.string().optional(),
     latestVersion: z.string().optional(),
     isArchived: z.boolean().optional(),
@@ -10,19 +10,19 @@ export const modelAssetOutputSchema = z.object({
 
 
 // Tool output types
-export const listModelAssetOutputSchema = z.array(modelAssetOutputSchema)
+export const listModelAssetSchema = z.array(modelAssetSchema)
 
 
 // Input Schemas for typing
-export const getLatestModelAssetInputSchema = z.object({
+export const getLatestModelAssetSchema = z.object({
     name: z.string().describe("The name of the model asset")
 })
 
 
 // Input schemas for typing
-export type GetLatestModelAssetInput = z.infer<typeof getLatestModelAssetInputSchema>
+export type GetLatestModelAsset = z.infer<typeof getLatestModelAssetSchema>
 
 // Output schemas for typing
-export type ListModelAssetOutput = z.infer<typeof listModelAssetOutputSchema>
-export type ModelAssetOutput = z.infer<typeof modelAssetOutputSchema>
+export type ListModelAsset = z.infer<typeof listModelAssetSchema>
+export type ModelAsset = z.infer<typeof modelAssetSchema>
 
