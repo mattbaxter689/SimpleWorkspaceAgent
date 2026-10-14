@@ -110,7 +110,6 @@ The server will start on `http://localhost:3000`
  
  
 ## Roadmap
-- [ ] Add compute list tool
 - [ ] Add YAML verification tool
 - [ ] Add data asset creation tool using YAML verifier and compute creation tool using YAML verifier
 - [ ] Add human approval for deletion tools. Larger change required to change application focusing on compute and data assets
@@ -122,6 +121,13 @@ For better observability
 
 For Development
 - [ ] Deploy to azure container apps
+
+## Out of Scope Future Updates
+These ideas are currently out of scope for the current project, but will be implemented once the initial scoping is complete:
+- [ ] Job error log fetch to triage the actual error behind job failures
+- [ ] Job tool to tie together triaging that *needs* to happen. Mainly to tie specific pieces or tools together so it happens purposefully. Can focus on this
+        later on in the cycle, as for now the main tools that need specific steps will be the asset creation tools. I can make the triage tool change later. **NOTE TO SELF**
+        when doing the triage tool, make sure to update both the tools description and the system prompt to account for the change and what to action for the jobs, based on how you changed things
  
 ## Security Notes
  
