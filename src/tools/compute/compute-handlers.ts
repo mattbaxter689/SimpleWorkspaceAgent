@@ -34,7 +34,7 @@ export async function handleGetComputeState(ctx: AzureCtx, params: GetComputeInp
     try {
         const compute = await ctx.client.computeOperations.get(ctx.resourceGroup, ctx.workspaceName, params.name)
         const baseProps: any = compute.properties;
-        const innerProps: any = baseProps?.properties; // Inner configuration payload
+        const innerProps: any = baseProps?.properties;
 
         // Extract vmSize safely across different compute variants
         const vmSize = innerProps?.vmSize || baseProps?.vmSize;
