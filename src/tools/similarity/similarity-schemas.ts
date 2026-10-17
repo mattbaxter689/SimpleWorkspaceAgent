@@ -17,3 +17,4 @@ export const detailedSimilarityMatchSchema = z.object({
     matches: z.array(similarityMatchSchema),
     otherSimilarNames: z.array(similarityMatchSchema)
 })
+export type DetailedSimilarityMatch = z.infer<typeof detailedSimilarityMatchSchema>
