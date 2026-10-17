@@ -18,3 +18,9 @@ export const detailedSimilarityMatchSchema = z.object({
     otherSimilarNames: z.array(similarityMatchSchema)
 })
 export type DetailedSimilarityMatch = z.infer<typeof detailedSimilarityMatchSchema>
+
+export const getSimilaritySearchSchema = z.object({
+    kind: z.enum(['data', 'model']),
+    name: z.string().describe("The name of the asset to search for similarities")
+})
+export type GetSimilaritySearch = z.infer<typeof getSimilaritySearchSchema>

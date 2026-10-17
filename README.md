@@ -113,6 +113,7 @@ The server will start on `http://localhost:3000`
 - [ ] Add YAML verification tool
 - [ ] Add data asset creation tool using YAML verifier and compute creation tool using YAML verifier
 - [ ] Add human approval for deletion tools. Larger change required to change application focusing on compute and data assets
+- [ ] Update similarity search spec to be used in upload of data assets
 
 For better observability
 - [ ] Add better logging to  tool calls to log time taken to run tool, tools called, etc to stdout
