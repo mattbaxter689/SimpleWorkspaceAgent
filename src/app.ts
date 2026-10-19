@@ -3,7 +3,8 @@ import type { AzureMachineLearningServicesManagementClient } from "@azure/arm-ma
 import { type StructuredLoggerEnv, structuredLogger } from "@hono/structured-logger";
 import { swaggerUI } from "@hono/swagger-ui";
 import { OpenAPIHono } from "@hono/zod-openapi";
-import { Output, generateText, stepCountIs } from "ai";
+import { generateText, stepCountIs } from "ai";
+import { bodyLimit } from "hono/body-limit";
 import pino from "pino";
 
 import { buildSystemPrompt } from "./agent/system-prompt";
@@ -11,6 +12,8 @@ import { envConfig } from "./config/env_config";
 import { getAzureClient } from "./credentials";
 import { chatRoute, getHealthRoute } from "./routes/openapi_routes";
 import { createAllTools } from "./tools/toolFactory";
+import { describeUploads, readUploads } from "./uploads/uploads";
+import { MAX_BODY_BYTES } from "./uploads/uploads";
 
 type AppEnv = StructuredLoggerEnv<pino.Logger> & {
   Variables: {
@@ -43,6 +46,8 @@ app.use(
   }),
 );
 
+app.use("/api/*", bodyLimit({ maxSize: MAX_BODY_BYTES }));
+
 // create endpoints for application
 app.openapi(getHealthRoute, (c) => {
   return c.json(
@@ -55,7 +60,8 @@ app.openapi(getHealthRoute, (c) => {
 });
 
 app.openapi(chatRoute, async (c) => {
-  const { question } = c.req.valid("json");
+  const { question, spec, data } = c.req.valid("form");
+  const uploads = await readUploads({ spec, data });
 
   // create the context for tools
   const azureCtx = {
@@ -65,16 +71,15 @@ app.openapi(chatRoute, async (c) => {
   };
 
   // instantiate the tools here
-  const tools = createAllTools({ azureCtx });
+  const tools = createAllTools({ azureCtx, uploads });
 
   const result = await generateText({
     model: google("gemini-3.5-flash-lite"),
-    output: Output.text(),
     instructions: buildSystemPrompt("oneShot"),
-    prompt: question,
+    prompt: question + describeUploads(uploads),
     tools: tools,
     maxRetries: 3,
-    stopWhen: stepCountIs(10),
+    stopWhen: stepCountIs(15),
   });
 
   return c.json(
