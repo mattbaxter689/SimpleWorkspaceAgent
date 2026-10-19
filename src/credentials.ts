@@ -11,32 +11,32 @@ let clientInstance: AzureMachineLearningServicesManagementClient | null = null;
  * Performs a ping test against the workspace. Should be called once during server bootstrap
  */
 export async function initAzureWorkspaceConnection(
-    logger: Logger,
+  logger: Logger,
 ): Promise<AzureMachineLearningServicesManagementClient> {
-    if (clientInstance) {
-        return clientInstance;
-    }
-
-    const log = logger.child({ module: "CredentialVerification" });
-    log.info("Azure ML subscription id provided. Creating client connection");
-
-    const credential = new DefaultAzureCredential();
-    const client = new AzureMachineLearningServicesManagementClient(
-        credential,
-        envConfig.AZURE_SUBSCRIPTION_ID,
-    );
-
-    log.info("Client connection successful");
-
-    //perform small ping test to ensure connection
-    const workspace = await client.workspaces.get(
-        envConfig.AZURE_RESOURCE_GROUP,
-        envConfig.AZURE_WORKSPACE_NAME,
-    );
-    log.info({ workspaceName: workspace.name }, "Workspace ping test successful");
-
-    clientInstance = client;
+  if (clientInstance) {
     return clientInstance;
+  }
+
+  const log = logger.child({ module: "CredentialVerification" });
+  log.info("Azure ML subscription id provided. Creating client connection");
+
+  const credential = new DefaultAzureCredential();
+  const client = new AzureMachineLearningServicesManagementClient(
+    credential,
+    envConfig.AZURE_SUBSCRIPTION_ID,
+  );
+
+  log.info("Client connection successful");
+
+  //perform small ping test to ensure connection
+  const workspace = await client.workspaces.get(
+    envConfig.AZURE_RESOURCE_GROUP,
+    envConfig.AZURE_WORKSPACE_NAME,
+  );
+  log.info({ workspaceName: workspace.name }, "Workspace ping test successful");
+
+  clientInstance = client;
+  return clientInstance;
 }
 
 /**
@@ -44,14 +44,14 @@ export async function initAzureWorkspaceConnection(
  * Throws an error if called before bootstrap initialization.
  */
 export function getAzureClient(): AzureMachineLearningServicesManagementClient {
-    if (!clientInstance) {
-        throw new Error(
-            "Azure ML Client accessed before initialization. Call initAzureWorkspaceConnection during app bootstrap",
-        );
-    }
-    return clientInstance;
+  if (!clientInstance) {
+    throw new Error(
+      "Azure ML Client accessed before initialization. Call initAzureWorkspaceConnection during app bootstrap",
+    );
+  }
+  return clientInstance;
 }
 
 // Shared credentials will be needed on creating assets
-const credential = new DefaultAzureCredential()
-export const getCredential = () => credential
+const credential = new DefaultAzureCredential();
+export const getCredential = () => credential;

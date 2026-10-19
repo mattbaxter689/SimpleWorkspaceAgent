@@ -9,8 +9,6 @@
   "scripts": {
     "start": "bun --watch run src/index.ts",
     "format": "prettier --write \"src/**/*.ts\""
-  }
-
   },
   "peerDependencies": {
     "typescript": "^7"
