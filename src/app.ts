@@ -62,7 +62,6 @@ app.openapi(getHealthRoute, (c) => {
 app.openapi(chatRoute, async (c) => {
     const { question, spec, data } = c.req.valid("form");
     const uploads = await readUploads({ spec, data });
-    rootLogger.info("Makes it to here")
 
     // create the context for tools
     const azureCtx = {

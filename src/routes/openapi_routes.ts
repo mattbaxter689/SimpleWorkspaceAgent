@@ -6,7 +6,9 @@ export const getHealthRoute = createRoute({
     responses: {
         200: {
             content: {
-                "application/json": { schema: z.object({ status: z.string(), timestamp: z.string() }) },
+                "application/json": {
+                    schema: z.object({ status: z.string(), timestamp: z.string() }),
+                },
             },
             description: "Health check response",
         },
@@ -17,10 +19,7 @@ const FileField = z.instanceof(File);
 
 const OptionalFile = (description: string) =>
     z
-        .preprocess(
-            (v) => (v === "" || v === null ? undefined : v),
-            FileField.optional(),
-        )
+        .preprocess((v) => (v === "" || v === null ? undefined : v), FileField.optional())
         .openapi({ type: "string", format: "binary", description });
 
 export const chatRoute = createRoute({

@@ -9,12 +9,12 @@ import type { ToolDeps } from "./types";
 import { createValidationTools } from "./validation";
 
 export function createAllTools(deps: ToolDeps): ToolSet {
-  return {
-    ...createDataAssetTools(deps),
-    ...createModelAssetTools(deps),
-    ...createComputeReadTools(deps),
-    ...createJobTools(deps),
-    ...createSimilarityTools(deps),
-    ...createValidationTools(deps),
-  };
+    return {
+        ...createDataAssetTools(deps),
+        ...createModelAssetTools(deps),
+        ...createComputeReadTools(deps),
+        ...createJobTools(deps),
+        ...createSimilarityTools(deps),
+        ...createValidationTools(deps),
+    };
 }
