@@ -3,7 +3,13 @@ import type { JobCountByStatus } from "../jobs";
 import { handleCountActiveJobsByCompute } from "../jobs/jobs-handlers";
 import type { AzureCtx } from "../types";
 import { assessReuse } from "./compute-assessment";
-import { parseComputeSpec, type ComputeAssessment, type ComputeReuseResult, type ComputeSummary, type GetComputeInput, type ListComputeSummary } from "./compute-schemas";
+import {
+    type ComputeAssessment,
+    type ComputeSummary,
+    type GetComputeInput,
+    type ListComputeSummary,
+    parseComputeSpec,
+} from "./compute-schemas";
 
 export async function handleListComputes(
     ctx: AzureCtx,
@@ -73,17 +79,22 @@ export async function handleGetComputeState(
     }
 }
 
-export async function handleAssessComputeReuse(ctx: AzureCtx, upload: Uploads): Promise<ComputeAssessment> {
-    const parsed = parseComputeSpec(upload.spec, upload.overrides?.computeName)
-    if (!parsed.ok) return { assessed: false, error: parsed.error }
+export async function handleAssessComputeReuse(
+    ctx: AzureCtx,
+    upload: Uploads,
+): Promise<ComputeAssessment> {
+    const parsed = parseComputeSpec(upload.spec, upload.overrides?.computeName);
+    if (!parsed.ok) return { assessed: false, error: parsed.error };
 
-    const existing = await handleListComputes(ctx, 200)
-    let activeJobs: JobCountByStatus | undefined
+    const existing = await handleListComputes(ctx, 200);
+    let activeJobs: JobCountByStatus | undefined;
 
-    try { activeJobs = await handleCountActiveJobsByCompute(ctx) } catch { }
+    try {
+        activeJobs = await handleCountActiveJobsByCompute(ctx);
+    } catch {}
 
     return {
         assessed: true,
-        result: assessReuse(parsed.value, existing, activeJobs)
-    }
+        result: assessReuse(parsed.value, existing, activeJobs),
+    };
 }

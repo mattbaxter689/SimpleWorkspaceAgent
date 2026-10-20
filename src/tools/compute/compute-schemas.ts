@@ -26,11 +26,7 @@ export type GetComputeInput = z.infer<typeof getComputeSchema>;
 
 // Final assessment result schema
 export const computeReuseResultSchema = z.object({
-    verdict: z.enum([
-        'reuse_existing',
-        'reuse_with_caveats',
-        'create_new',
-    ]),
+    verdict: z.enum(["reuse_existing", "reuse_with_caveats", "create_new"]),
     nameTaken: z.boolean(),
     identicalAlreadyExists: z.boolean(),
     requested: z.object({
@@ -39,24 +35,28 @@ export const computeReuseResultSchema = z.object({
         tier: z.string(),
         maxNodes: z.number(),
     }),
-    candidates: z.array(z.object({
-        name: z.string(),
-        match: z.enum(['exact', 'partial']),
-        problems: z.array(z.string()),
-        state: z.string().optional(),
-        currentNodes: z.number().optional(),
-        activeJobs: z.number().optional(),
-    })).max(5),
+    candidates: z
+        .array(
+            z.object({
+                name: z.string(),
+                match: z.enum(["exact", "partial"]),
+                problems: z.array(z.string()),
+                state: z.string().optional(),
+                currentNodes: z.number().optional(),
+                activeJobs: z.number().optional(),
+            }),
+        )
+        .max(5),
     activeJobsKnown: z.boolean(),
-})
-export type ComputeReuseResult = z.infer<typeof computeReuseResultSchema>
+});
+export type ComputeReuseResult = z.infer<typeof computeReuseResultSchema>;
 
 export const computeAssessmentSchema = z.object({
     assessed: z.boolean(),
     error: z.string().optional(),
-    result: computeReuseResultSchema.optional()
-})
-export type ComputeAssessment = z.infer<typeof computeAssessmentSchema>
+    result: computeReuseResultSchema.optional(),
+});
+export type ComputeAssessment = z.infer<typeof computeAssessmentSchema>;
 
 // Everything below is specific to creating a compute cluster in Azure
 // Restrict to allowed vm's to reduce errors and simplify
