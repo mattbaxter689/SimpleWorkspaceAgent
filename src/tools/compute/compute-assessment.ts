@@ -1,3 +1,4 @@
+import type { JobCountByStatus } from '../jobs'
 import type { ValidatedComputeSpec, ListComputeSummary, ComputeReuseResult } from './compute-schemas'
 
 export type ReuseVerdict = 'reuse_existing' | 'reuse_with_caveats' | 'create_new'
@@ -15,7 +16,7 @@ export interface ReuseCandidate {
 export function assessReuse(
     spec: ValidatedComputeSpec,
     existing: ListComputeSummary,
-    activeJobs?: Map<string, number>,
+    activeJobs?: JobCountByStatus
 ): ComputeReuseResult {
     const wantedPriority = spec.tier === 'low_priority' ? 'LowPriority' : 'Dedicated'
     const nameTaken = existing.some(c => c.name?.toLowerCase() === spec.name.toLowerCase())

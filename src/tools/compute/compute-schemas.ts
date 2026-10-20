@@ -51,6 +51,13 @@ export const computeReuseResultSchema = z.object({
 })
 export type ComputeReuseResult = z.infer<typeof computeReuseResultSchema>
 
+export const computeAssessmentSchema = z.object({
+    assessed: z.boolean(),
+    error: z.string().optional(),
+    result: computeReuseResultSchema.optional()
+})
+export type ComputeAssessment = z.infer<typeof computeAssessmentSchema>
+
 // Everything below is specific to creating a compute cluster in Azure
 // Restrict to allowed vm's to reduce errors and simplify
 export const ALLOWED_VM_SIZES = ["Standard_DS3_v2", "Standard_DS4_v2"] as const;
