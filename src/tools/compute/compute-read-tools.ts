@@ -2,14 +2,15 @@ import { tool } from "ai";
 import { z } from "zod";
 
 import type { ToolDeps } from "../types";
-import { handleGetComputeState, handleListComputes } from "./compute-handlers";
+import { handleAssessComputeReuse, handleGetComputeState, handleListComputes } from "./compute-handlers";
 import {
+    computeAssessmentSchema,
     computeSummarySchema,
     getComputeSchema,
     listComputeSummarySchema,
 } from "./compute-schemas";
 
-export const createComputeReadTools = ({ azureCtx }: ToolDeps) => ({
+export const createComputeReadTools = ({ azureCtx, uploads }: ToolDeps) => ({
     listComputes: tool({
         description:
             "List the compute targets in the workspace with state, VM Size, priority, and not limits",
@@ -26,4 +27,12 @@ export const createComputeReadTools = ({ azureCtx }: ToolDeps) => ({
         outputSchema: computeSummarySchema,
         execute: (params) => handleGetComputeState(azureCtx, params),
     }),
+    assessComputeReuse: tool({
+        description: "Compare the attached compute spec with existing clusters and decide whether one can be reused instead of " +
+            "creating a new one. Returns a verdict (reuse_existing, reuse_with_caveats, create_new), whether the name " +
+            "is taken, and candidate clusters with reasons and active job counts. Takes no arguments.",
+        inputSchema: z.object({}),
+        outputSchema: computeAssessmentSchema,
+        execute: () => handleAssessComputeReuse(azureCtx, uploads)
+    })
 });

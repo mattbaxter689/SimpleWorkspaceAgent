@@ -1,5 +1,9 @@
+import type { Uploads } from "../../uploads/schemas";
+import type { JobCountByStatus } from "../jobs";
+import { handleCountActiveJobsByCompute } from "../jobs/jobs-handlers";
 import type { AzureCtx } from "../types";
-import type { ComputeSummary, GetComputeInput, ListComputeSummary } from "./compute-schemas";
+import { assessReuse } from "./compute-assessment";
+import { parseComputeSpec, type ComputeAssessment, type ComputeReuseResult, type ComputeSummary, type GetComputeInput, type ListComputeSummary } from "./compute-schemas";
 
 export async function handleListComputes(
     ctx: AzureCtx,
@@ -66,5 +70,20 @@ export async function handleGetComputeState(
     } catch (e: any) {
         if (e?.statusCode === 404) return { found: false as const, name: params.name };
         throw e;
+    }
+}
+
+export async function handleAssessComputeReuse(ctx: AzureCtx, upload: Uploads): Promise<ComputeAssessment> {
+    const parsed = parseComputeSpec(upload.spec, upload.overrides?.computeName)
+    if (!parsed.ok) return { assessed: false, error: parsed.error }
+
+    const existing = await handleListComputes(ctx, 200)
+    let activeJobs: JobCountByStatus | undefined
+
+    try { activeJobs = await handleCountActiveJobsByCompute(ctx) } catch { }
+
+    return {
+        assessed: true,
+        result: assessReuse(parsed.value, existing, activeJobs)
     }
 }
