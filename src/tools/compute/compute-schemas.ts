@@ -24,6 +24,33 @@ export const getComputeSchema = z.object({
 });
 export type GetComputeInput = z.infer<typeof getComputeSchema>;
 
+// Final assessment result schema
+export const computeReuseResultSchema = z.object({
+    verdict: z.enum([
+        'reuse_existing',
+        'reuse_with_caveats',
+        'create_new',
+    ]),
+    nameTaken: z.boolean(),
+    identicalAlreadyExists: z.boolean(),
+    requested: z.object({
+        name: z.string(),
+        size: z.string(),
+        tier: z.string(),
+        maxNodes: z.number(),
+    }),
+    candidates: z.array(z.object({
+        name: z.string(),
+        match: z.enum(['exact', 'partial']),
+        problems: z.array(z.string()),
+        state: z.string().optional(),
+        currentNodes: z.number().optional(),
+        activeJobs: z.number().optional(),
+    })).max(5),
+    activeJobsKnown: z.boolean(),
+})
+export type ComputeReuseResult = z.infer<typeof computeReuseResultSchema>
+
 // Everything below is specific to creating a compute cluster in Azure
 // Restrict to allowed vm's to reduce errors and simplify
 export const ALLOWED_VM_SIZES = ["Standard_DS3_v2", "Standard_DS4_v2"] as const;
