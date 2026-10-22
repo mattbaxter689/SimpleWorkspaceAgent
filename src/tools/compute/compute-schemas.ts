@@ -4,6 +4,14 @@ import { type Parsed, parseYaml, zodIssues } from "../../uploads/parse";
 import type { UploadedFile } from "../../uploads/schemas";
 import { type Validated, markValidated } from "../../uploads/validated";
 
+export const ALLOWED_VM_SIZES = ["Standard_DS3_v2", "Standard_DS4_v2"] as const;
+export const MAX_NODES = 8;
+export const COMPUTE_NAME_REGEX = /^[a-zA-Z][a-zA-Z0-9-]{1,23}$/;
+export const VM_INFO: Record<(typeof ALLOWED_VM_SIZES)[number], { family: string; cores: number }> = {
+    Standard_DS3_v2: { family: 'standardDSv2Family', cores: 4 },
+    Standard_DS4_v2: { family: 'standardDSv2Family', cores: 8 },
+}
+
 export const computeSummarySchema = z.object({
     found: z.boolean().optional(),
     name: z.string().optional(),
@@ -51,6 +59,8 @@ export const computeReuseResultSchema = z.object({
 });
 export type ComputeReuseResult = z.infer<typeof computeReuseResultSchema>;
 
+// Returns the final packaged result of the computeReuseResultSchema,
+// along with possible errors when parsing the fields
 export const computeAssessmentSchema = z.object({
     assessed: z.boolean(),
     error: z.string().optional(),
@@ -58,12 +68,21 @@ export const computeAssessmentSchema = z.object({
 });
 export type ComputeAssessment = z.infer<typeof computeAssessmentSchema>;
 
-// Everything below is specific to creating a compute cluster in Azure
-// Restrict to allowed vm's to reduce errors and simplify
-export const ALLOWED_VM_SIZES = ["Standard_DS3_v2", "Standard_DS4_v2"] as const;
-export const MAX_NODES = 8;
-export const COMPUTE_NAME_REGEX = /^[a-zA-Z][a-zA-Z0-9-]{1,23}$/;
+// Schema to determine if the user has quota available
+// to create the desired compute cluster type
+export const computeQuotaCheckSchema = z.object({
+    checked: z.boolean(),
+    error: z.string().optional(),
+    note: z.string().optional(),
+    family: z.string().optional(),
+    requiredCores: z.number().optional(),
+    availableCores: z.number().optional(),
+    sufficient: z.boolean().optional()
+})
+export type ComputeQuotaCheck = z.infer<typeof computeQuotaCheckSchema>
 
+// The representation of yaml fields when creating a
+// compute target in Azure ML
 export const computeSpecSchema = z
     .object({
         $schema: z.string().optional(),

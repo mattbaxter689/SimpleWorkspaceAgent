@@ -5,11 +5,18 @@ import type { AzureCtx } from "../types";
 import { assessReuse } from "./compute-assessment";
 import {
     type ComputeAssessment,
+    type ComputeQuotaCheck,
     type ComputeSummary,
     type GetComputeInput,
     type ListComputeSummary,
     parseComputeSpec,
+    VM_INFO,
 } from "./compute-schemas";
+
+interface QuotaCheck {
+    used: number,
+    limit: number
+}
 
 export async function handleListComputes(
     ctx: AzureCtx,
@@ -79,6 +86,14 @@ export async function handleGetComputeState(
     }
 }
 
+export async function getFamilyUsage(ctx: AzureCtx, family: string): Promise<QuotaCheck | undefined> {
+    const ws = await ctx.client.workspaces.get(ctx.resourceGroup, ctx.workspaceName)
+    for await (const u of ctx.client.usages.list(ws.location!)) {
+        if (u.name?.value === family) return { used: u.currentValue ?? 0, limit: u.limit ?? 0 }
+    }
+    return undefined
+}
+
 export async function handleAssessComputeReuse(
     ctx: AzureCtx,
     upload: Uploads,
@@ -91,10 +106,35 @@ export async function handleAssessComputeReuse(
 
     try {
         activeJobs = await handleCountActiveJobsByCompute(ctx);
-    } catch {}
+    } catch { }
 
     return {
         assessed: true,
         result: assessReuse(parsed.value, existing, activeJobs),
     };
+}
+
+export async function handleCheckComputeQuota(ctx: AzureCtx, uploads: Uploads): Promise<ComputeQuotaCheck> {
+    const parsed = parseComputeSpec(uploads.spec, uploads.overrides?.computeName)
+    if (!parsed.ok) return { checked: false, error: parsed.error }
+    const spec = parsed.value
+
+    if (spec.tier === "low_priority") {
+        return { checked: false, note: 'low_priority compute clusters are not supported in this iteration of the agent' }
+    }
+
+    const { family, cores } = VM_INFO[spec.size]
+    const required = spec.max_instances * cores
+    const usage = await getFamilyUsage(ctx, family)
+
+    if (!usage) return { checked: false, note: "No quota information available for this family" }
+    const available = usage.limit - usage.used
+
+    return {
+        checked: true,
+        family,
+        requiredCores: required,
+        availableCores: available,
+        sufficient: available >= required
+    }
 }

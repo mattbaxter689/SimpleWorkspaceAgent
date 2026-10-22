@@ -4,11 +4,13 @@ import { z } from "zod";
 import type { ToolDeps } from "../types";
 import {
     handleAssessComputeReuse,
+    handleCheckComputeQuota,
     handleGetComputeState,
     handleListComputes,
 } from "./compute-handlers";
 import {
     computeAssessmentSchema,
+    computeQuotaCheckSchema,
     computeSummarySchema,
     getComputeSchema,
     listComputeSummarySchema,
@@ -40,4 +42,10 @@ export const createComputeReadTools = ({ azureCtx, uploads }: ToolDeps) => ({
         outputSchema: computeAssessmentSchema,
         execute: () => handleAssessComputeReuse(azureCtx, uploads),
     }),
+    checkComputeQuota: tool({
+        description: "Check whether the workspace region has enough core quota for the attached compute spec",
+        inputSchema: z.object({}),
+        outputSchema: computeQuotaCheckSchema,
+        execute: () => handleCheckComputeQuota(azureCtx, uploads)
+    })
 });
