@@ -3,14 +3,7 @@ import { z } from "zod";
 import { type Parsed, parseYaml, zodIssues } from "../../uploads/parse";
 import type { UploadedFile } from "../../uploads/schemas";
 import { type Validated, markValidated } from "../../uploads/validated";
-
-export const ALLOWED_VM_SIZES = ["Standard_DS3_v2", "Standard_DS4_v2"] as const;
-export const MAX_NODES = 8;
-export const COMPUTE_NAME_REGEX = /^[a-zA-Z][a-zA-Z0-9-]{1,23}$/;
-export const VM_INFO: Record<(typeof ALLOWED_VM_SIZES)[number], { family: string; cores: number }> = {
-    Standard_DS3_v2: { family: 'standardDSv2Family', cores: 4 },
-    Standard_DS4_v2: { family: 'standardDSv2Family', cores: 8 },
-}
+import { ALLOWED_VM_SIZES, COMPUTE_NAME_REGEX, MAX_NODES } from "./compute-utils";
 
 export const computeSummarySchema = z.object({
     found: z.boolean().optional(),
@@ -80,6 +73,31 @@ export const computeQuotaCheckSchema = z.object({
     sufficient: z.boolean().optional()
 })
 export type ComputeQuotaCheck = z.infer<typeof computeQuotaCheckSchema>
+
+export const computeNameCheckSchema = z.object({
+    checked: z.boolean(),
+    error: z.string().optional(),
+    name: z.string().optional(),
+    formatValid: z.boolean().optional(),
+    formatRule: z.string().optional(),
+    exists: z.boolean().optional(),
+    existing: z.object({
+        type: z.string().optional(),
+        vmSize: z.string().optional(),
+        state: z.string().optional()
+    }).optional(),
+    suggestions: z.array(z.string().optional()).optional()
+})
+export type ComputeNameCheck = z.infer<typeof computeNameCheckSchema>
+
+export const renameComputeSchema = z.object({
+    renamed: z.boolean(),
+    error: z.string().optional(),
+    suggestions: z.array(z.string().optional()).optional(),
+    name: z.string().optional(),
+    note: z.string().optional()
+})
+export type RenameCompute = z.infer<typeof renameComputeSchema>
 
 // The representation of yaml fields when creating a
 // compute target in Azure ML
