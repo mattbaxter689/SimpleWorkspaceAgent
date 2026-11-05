@@ -4,7 +4,6 @@ import { z } from "zod";
 import type { ToolDeps } from "../types";
 import { handleGetLatestDataAsset, handleListDataAssets } from "./data-asset-handlers";
 import {
-    getLatestDataAssetName,
     getLatestDataAssetSchema,
     listDataAssetSchema,
 } from "./data-asset-schemas";
@@ -19,8 +18,8 @@ export const createDataAssetTools = ({ azureCtx }: ToolDeps) => ({
 
     getLatestDataAsset: tool({
         description: "Fetches the latest version for a specific data asset in the workspace",
-        inputSchema: getLatestDataAssetName,
+        inputSchema: z.object({ name: z.string() }),
         outputSchema: getLatestDataAssetSchema,
-        execute: (params) => handleGetLatestDataAsset(azureCtx, params),
+        execute: ({ name }) => handleGetLatestDataAsset(azureCtx, name),
     }),
 });

@@ -4,11 +4,6 @@ import { type Parsed, isParquet, parseYaml, zodIssues } from "../../uploads/pars
 import type { UploadedFile } from "../../uploads/schemas";
 import { type Validated, markValidated } from "../../uploads/validated";
 
-// Tool input types
-export const getLatestDataAssetName = z.object({
-    name: z.string().describe("The name of the data asset"),
-});
-
 // Tool output types
 export const listDataAssetSchema = z.array(
     z.object({
@@ -16,6 +11,7 @@ export const listDataAssetSchema = z.array(
         id: z.string().optional(),
     }),
 );
+export type ListDataAsset = z.infer<typeof listDataAssetSchema>;
 
 export const getLatestDataAssetSchema = z.object({
     version: z.string(),
@@ -24,13 +20,15 @@ export const getLatestDataAssetSchema = z.object({
     dataType: z.string().optional(),
     createdAt: z.string().optional(),
 });
-
-// Input Schemas for typing
-export type GetLatestDataAssetName = z.infer<typeof getLatestDataAssetName>;
-
-// Output schemas for typing
 export type GetLatestDataAsset = z.infer<typeof getLatestDataAssetSchema>;
-export type ListDataAsset = z.infer<typeof listDataAssetSchema>;
+
+export const createDataAssetResultSchema = z.object({
+    created: z.boolean(),
+    error: z.string().optional(),
+    name: z.string().optional(),
+    note: z.string().optional()
+})
+export type CreateDataAssetResult = z.infer<typeof createDataAssetResultSchema>
 
 // Everything here is specific to creating a data asset in Azure
 export const dataSpecSchema = z
