@@ -12,14 +12,11 @@ import {
     type GetComputeInput,
     type ListComputeSummary,
     type RenameCompute,
+    type ComputeCreateResult,
     parseComputeSpec,
 } from "./compute-schemas";
-import { COMPUTE_NAME_REGEX, VM_INFO, sanitizeName, suggestFreeNames } from "./compute-utils";
+import { COMPUTE_NAME_REGEX, VM_INFO, sanitizeName, suggestFreeNames, checkComputeExists, startComputeCreation, type QuotaCheck, getFamilyUsage } from "./compute-utils";
 
-interface QuotaCheck {
-    used: number;
-    limit: number;
-}
 
 export async function handleListComputes(
     ctx: AzureCtx,
@@ -89,17 +86,6 @@ export async function handleGetComputeState(
     }
 }
 
-export async function getFamilyUsage(
-    ctx: AzureCtx,
-    family: string,
-): Promise<QuotaCheck | undefined> {
-    const ws = await ctx.client.workspaces.get(ctx.resourceGroup, ctx.workspaceName);
-    for await (const u of ctx.client.usages.list(ws.location!)) {
-        if (u.name?.value === family) return { used: u.currentValue ?? 0, limit: u.limit ?? 0 };
-    }
-    return undefined;
-}
-
 export async function handleAssessComputeReuse(
     ctx: AzureCtx,
     upload: Uploads,
@@ -112,7 +98,7 @@ export async function handleAssessComputeReuse(
 
     try {
         activeJobs = await handleCountActiveJobsByCompute(ctx);
-    } catch {}
+    } catch { }
 
     return {
         assessed: true,
@@ -208,4 +194,17 @@ export async function handleRenameComputeInSpec(
         name: newName,
         note: "The create step will use this name. The uploaded YAML file itself is unchanged.",
     };
+}
+
+
+export async function handleCreateComputeFromSpec(ctx: AzureCtx, uploads: Uploads): Promise<ComputeCreateResult> {
+    const parsed = parseComputeSpec(uploads.spec, uploads.overrides?.computeName)
+    if (!parsed.ok) return { created: false, error: parsed.error }
+    const spec = parsed.value
+
+    if (await checkComputeExists(ctx, spec.name)) {
+        return { created: false, error: `A compute named ${spec.name} already exists` }
+    }
+    await startComputeCreation(ctx, spec)
+    return { created: true, name: spec.name, state: "Creating", note: "Provisioning continues in background" }
 }
