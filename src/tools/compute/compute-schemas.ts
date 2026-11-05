@@ -101,6 +101,15 @@ export const renameComputeSchema = z.object({
 });
 export type RenameCompute = z.infer<typeof renameComputeSchema>;
 
+export const computeCreateResultSchema = z.object({
+    created: z.boolean(),
+    error: z.string().optional(),
+    name: z.string().optional(),
+    state: z.string().optional(),
+    note: z.string().optional()
+})
+export type ComputeCreateResult = z.infer<typeof computeCreateResultSchema>
+
 // The representation of yaml fields when creating a
 // compute target in Azure ML
 export const computeSpecSchema = z
