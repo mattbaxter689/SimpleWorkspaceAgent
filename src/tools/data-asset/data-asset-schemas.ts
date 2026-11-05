@@ -36,10 +36,6 @@ export const dataSpecSchema = z
         $schema: z.string().optional(),
         type: z.literal("uri_file"),
         name: z.string().regex(/^[a-zA-Z0-9][a-zA-Z0-9_-]{0,254}$/),
-        version: z
-            .union([z.string(), z.number()])
-            .transform(String)
-            .pipe(z.string().regex(/^[A-Za-z0-9._-]{1,30}$/)),
         description: z.string().max(1000).optional(),
         tags: z.record(z.string(), z.string()).optional(),
         path: z.string(),
