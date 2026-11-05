@@ -43,9 +43,10 @@ export const createComputeReadTools = ({ azureCtx, uploads }: ToolDeps) => ({
         execute: () => handleAssessComputeReuse(azureCtx, uploads),
     }),
     checkComputeQuota: tool({
-        description: "Check whether the workspace region has enough core quota for the attached compute spec",
+        description:
+            "Check whether the workspace region has enough core quota for the attached compute spec",
         inputSchema: z.object({}),
         outputSchema: computeQuotaCheckSchema,
-        execute: () => handleCheckComputeQuota(azureCtx, uploads)
-    })
+        execute: () => handleCheckComputeQuota(azureCtx, uploads),
+    }),
 });

@@ -48,7 +48,7 @@ export function assessReuse(
             problems,
             state: c.state,
             currentNodes: c.currentNodes,
-            activeJobs: activeJobs?.get(c.name) ?? (activeJobs ? 0 : undefined),
+            activeJobs: activeJobs ? (activeJobs[c.name] ?? 0) : undefined,
         });
     }
 
@@ -61,8 +61,8 @@ export function assessReuse(
     const verdict: ReuseVerdict = candidates.some((c) => c.match === "exact")
         ? "reuse_existing"
         : candidates.length > 0
-          ? "reuse_with_caveats"
-          : "create_new";
+            ? "reuse_with_caveats"
+            : "create_new";
 
     return {
         verdict,

@@ -70,9 +70,9 @@ export const computeQuotaCheckSchema = z.object({
     family: z.string().optional(),
     requiredCores: z.number().optional(),
     availableCores: z.number().optional(),
-    sufficient: z.boolean().optional()
-})
-export type ComputeQuotaCheck = z.infer<typeof computeQuotaCheckSchema>
+    sufficient: z.boolean().optional(),
+});
+export type ComputeQuotaCheck = z.infer<typeof computeQuotaCheckSchema>;
 
 export const computeNameCheckSchema = z.object({
     checked: z.boolean(),
@@ -81,23 +81,25 @@ export const computeNameCheckSchema = z.object({
     formatValid: z.boolean().optional(),
     formatRule: z.string().optional(),
     exists: z.boolean().optional(),
-    existing: z.object({
-        type: z.string().optional(),
-        vmSize: z.string().optional(),
-        state: z.string().optional()
-    }).optional(),
-    suggestions: z.array(z.string().optional()).optional()
-})
-export type ComputeNameCheck = z.infer<typeof computeNameCheckSchema>
+    existing: z
+        .object({
+            type: z.string().optional(),
+            vmSize: z.string().optional(),
+            state: z.string().optional(),
+        })
+        .optional(),
+    suggestions: z.array(z.string().optional()).optional(),
+});
+export type ComputeNameCheck = z.infer<typeof computeNameCheckSchema>;
 
 export const renameComputeSchema = z.object({
     renamed: z.boolean(),
     error: z.string().optional(),
     suggestions: z.array(z.string().optional()).optional(),
     name: z.string().optional(),
-    note: z.string().optional()
-})
-export type RenameCompute = z.infer<typeof renameComputeSchema>
+    note: z.string().optional(),
+});
+export type RenameCompute = z.infer<typeof renameComputeSchema>;
 
 // The representation of yaml fields when creating a
 // compute target in Azure ML

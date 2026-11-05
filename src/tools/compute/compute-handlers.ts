@@ -11,14 +11,14 @@ import {
     type ComputeSummary,
     type GetComputeInput,
     type ListComputeSummary,
-    parseComputeSpec,
     type RenameCompute,
+    parseComputeSpec,
 } from "./compute-schemas";
-import { COMPUTE_NAME_REGEX, VM_INFO, suggestFreeNames, sanitizeName } from "./compute-utils";
+import { COMPUTE_NAME_REGEX, VM_INFO, sanitizeName, suggestFreeNames } from "./compute-utils";
 
 interface QuotaCheck {
-    used: number,
-    limit: number
+    used: number;
+    limit: number;
 }
 
 export async function handleListComputes(
@@ -89,12 +89,15 @@ export async function handleGetComputeState(
     }
 }
 
-export async function getFamilyUsage(ctx: AzureCtx, family: string): Promise<QuotaCheck | undefined> {
-    const ws = await ctx.client.workspaces.get(ctx.resourceGroup, ctx.workspaceName)
+export async function getFamilyUsage(
+    ctx: AzureCtx,
+    family: string,
+): Promise<QuotaCheck | undefined> {
+    const ws = await ctx.client.workspaces.get(ctx.resourceGroup, ctx.workspaceName);
     for await (const u of ctx.client.usages.list(ws.location!)) {
-        if (u.name?.value === family) return { used: u.currentValue ?? 0, limit: u.limit ?? 0 }
+        if (u.name?.value === family) return { used: u.currentValue ?? 0, limit: u.limit ?? 0 };
     }
-    return undefined
+    return undefined;
 }
 
 export async function handleAssessComputeReuse(
@@ -109,7 +112,7 @@ export async function handleAssessComputeReuse(
 
     try {
         activeJobs = await handleCountActiveJobsByCompute(ctx);
-    } catch { }
+    } catch {}
 
     return {
         assessed: true,
@@ -117,68 +120,92 @@ export async function handleAssessComputeReuse(
     };
 }
 
-export async function handleCheckComputeQuota(ctx: AzureCtx, uploads: Uploads): Promise<ComputeQuotaCheck> {
-    const parsed = parseComputeSpec(uploads.spec, uploads.overrides?.computeName)
-    if (!parsed.ok) return { checked: false, error: parsed.error }
-    const spec = parsed.value
+export async function handleCheckComputeQuota(
+    ctx: AzureCtx,
+    uploads: Uploads,
+): Promise<ComputeQuotaCheck> {
+    const parsed = parseComputeSpec(uploads.spec, uploads.overrides?.computeName);
+    if (!parsed.ok) return { checked: false, error: parsed.error };
+    const spec = parsed.value;
 
     if (spec.tier === "low_priority") {
-        return { checked: false, note: 'low_priority compute clusters are not supported in this iteration of the agent' }
+        return {
+            checked: false,
+            note: "low_priority compute clusters are not supported in this iteration of the agent",
+        };
     }
 
-    const { family, cores } = VM_INFO[spec.size]
-    const required = spec.max_instances * cores
-    const usage = await getFamilyUsage(ctx, family)
+    const { family, cores } = VM_INFO[spec.size];
+    const required = spec.max_instances * cores;
+    const usage = await getFamilyUsage(ctx, family);
 
-    if (!usage) return { checked: false, note: "No quota information available for this family" }
-    const available = usage.limit - usage.used
+    if (!usage) return { checked: false, note: "No quota information available for this family" };
+    const available = usage.limit - usage.used;
 
     return {
         checked: true,
         family,
         requiredCores: required,
         availableCores: available,
-        sufficient: available >= required
-    }
+        sufficient: available >= required,
+    };
 }
 
-export async function handleCheckComputeName(ctx: AzureCtx, uploads: Uploads, name: string | undefined): Promise<ComputeNameCheck> {
-    const candidate = name ?? (uploads.overrides?.computeName ?? rawSpecName(uploads.spec))
-    if (!candidate) return { checked: false, error: "No name given, and none found in the attached spec" }
+export async function handleCheckComputeName(
+    ctx: AzureCtx,
+    uploads: Uploads,
+    name: string | undefined,
+): Promise<ComputeNameCheck> {
+    const candidate = name ?? uploads.overrides?.computeName ?? rawSpecName(uploads.spec);
+    if (!candidate)
+        return { checked: false, error: "No name given, and none found in the attached spec" };
 
-    const computes = await handleListComputes(ctx, 200)
-    const taken = new Set(computes.map(c => c.name).filter((n): n is string => !!n))
-    const existing = computes.find(c => c.name?.toLowerCase() === candidate.toLowerCase())
-    const formatValid = COMPUTE_NAME_REGEX.test(candidate)
+    const computes = await handleListComputes(ctx, 200);
+    const taken = new Set(computes.map((c) => c.name).filter((n): n is string => !!n));
+    const existing = computes.find((c) => c.name?.toLowerCase() === candidate.toLowerCase());
+    const formatValid = COMPUTE_NAME_REGEX.test(candidate);
 
     return {
         checked: true,
         name: candidate,
         formatValid,
-        formatRule: formatValid ? undefined : 'Must start with a letter; letters, digits and hyphens only; 2 to 24 characters',
+        formatRule: formatValid
+            ? undefined
+            : "Must start with a letter; letters, digits and hyphens only; 2 to 24 characters",
         exists: !!existing,
-        existing: existing ? { type: existing.type, vmSize: existing.vmSize, state: existing.state } : undefined,
-        suggestions: !formatValid || existing ? suggestFreeNames(sanitizeName(candidate), taken) : [],
-    }
+        existing: existing
+            ? { type: existing.type, vmSize: existing.vmSize, state: existing.state }
+            : undefined,
+        suggestions:
+            !formatValid || existing ? suggestFreeNames(sanitizeName(candidate), taken) : [],
+    };
 }
 
-export async function handleRenameComputeInSpec(ctx: AzureCtx, uploads: Uploads, newName: string): Promise<RenameCompute> {
-    if (!uploads.spec) return { renamed: false, error: 'No YAML spec attached' }
+export async function handleRenameComputeInSpec(
+    ctx: AzureCtx,
+    uploads: Uploads,
+    newName: string,
+): Promise<RenameCompute> {
+    if (!uploads.spec) return { renamed: false, error: "No YAML spec attached" };
 
     // same schema as the original, so format rules and every other rule still apply
-    const trial = parseComputeSpec(uploads.spec, newName)
-    if (!trial.ok) return { renamed: false, error: trial.error }
+    const trial = parseComputeSpec(uploads.spec, newName);
+    if (!trial.ok) return { renamed: false, error: trial.error };
 
-    const computes = await handleListComputes(ctx, 200)
-    const taken = new Set(computes.map(c => c.name).filter((n): n is string => !!n))
-    if ([...taken].some(n => n.toLowerCase() === newName.toLowerCase())) {
-        return { renamed: false, error: `'${newName}' already exists`, suggestions: suggestFreeNames(sanitizeName(newName), taken) }
+    const computes = await handleListComputes(ctx, 200);
+    const taken = new Set(computes.map((c) => c.name).filter((n): n is string => !!n));
+    if ([...taken].some((n) => n.toLowerCase() === newName.toLowerCase())) {
+        return {
+            renamed: false,
+            error: `'${newName}' already exists`,
+            suggestions: suggestFreeNames(sanitizeName(newName), taken),
+        };
     }
 
-    uploads.overrides = { ...uploads.overrides, computeName: newName }
+    uploads.overrides = { ...uploads.overrides, computeName: newName };
     return {
         renamed: true,
         name: newName,
-        note: 'The create step will use this name. The uploaded YAML file itself is unchanged.',
-    }
+        note: "The create step will use this name. The uploaded YAML file itself is unchanged.",
+    };
 }
