@@ -106,9 +106,9 @@ export const computeCreateResultSchema = z.object({
     error: z.string().optional(),
     name: z.string().optional(),
     state: z.string().optional(),
-    note: z.string().optional()
-})
-export type ComputeCreateResult = z.infer<typeof computeCreateResultSchema>
+    note: z.string().optional(),
+});
+export type ComputeCreateResult = z.infer<typeof computeCreateResultSchema>;
 
 // The representation of yaml fields when creating a
 // compute target in Azure ML

@@ -61,8 +61,8 @@ export function assessReuse(
     const verdict: ReuseVerdict = candidates.some((c) => c.match === "exact")
         ? "reuse_existing"
         : candidates.length > 0
-            ? "reuse_with_caveats"
-            : "create_new";
+          ? "reuse_with_caveats"
+          : "create_new";
 
     return {
         verdict,
