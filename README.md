@@ -125,10 +125,9 @@ For Development
 
 ## Out of Scope Future Updates
 These ideas are currently out of scope for the current project, but will be implemented once the initial scoping is complete:
+- [ ] Deploy application to Azure Container Apps service
+- [ ] Add evals for agent monitoring
 - [ ] Job error log fetch to triage the actual error behind job failures
-- [ ] Job tool to tie together triaging that *needs* to happen. Mainly to tie specific pieces or tools together so it happens purposefully. Can focus on this
-        later on in the cycle, as for now the main tools that need specific steps will be the asset creation tools. I can make the triage tool change later. **NOTE TO SELF**
-        when doing the triage tool, make sure to update both the tools description and the system prompt to account for the change and what to action for the jobs, based on how you changed things
 - [ ] Add human approval requirement for creating compute and data assets. Currently moved out as it will be too involved for what else I have planned for the project
  
 ## Security Notes
