@@ -20,7 +20,7 @@ export async function handleListDataAssets(ctx: AzureCtx): Promise<ListDataAsset
 // Fetches latest version for the specified data asset
 export async function handleGetLatestDataAsset(
     ctx: AzureCtx,
-    name: string
+    name: string,
 ): Promise<GetLatestDataAsset> {
     const versions = [];
 
@@ -57,7 +57,10 @@ export async function handleGetLatestDataAsset(
     };
 }
 
-export async function handleCreateDataAsset(ctx: AzureCtx, upload: Uploads): Promise<CreateDataAssetResult> {
+export async function handleCreateDataAsset(
+    ctx: AzureCtx,
+    upload: Uploads,
+): Promise<CreateDataAssetResult> {
     const parsed = parseDataSpec(upload.spec, upload.data);
     if (!parsed.ok) return { created: false, error: parsed.error };
     const to_upload = parsed.value;

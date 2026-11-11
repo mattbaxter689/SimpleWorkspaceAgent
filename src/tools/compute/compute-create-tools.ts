@@ -2,7 +2,7 @@ import { tool } from "ai";
 import { z } from "zod";
 
 import type { ToolDeps } from "../types";
-import { handleCreateComputeFromSpec } from "./compute-handlers";
+import { handleCreateCompute } from "./compute-handlers";
 import { computeCreateResultSchema } from "./compute-schemas";
 
 export const createComputeTools = ({ azureCtx, uploads }: ToolDeps) => ({
@@ -12,6 +12,6 @@ export const createComputeTools = ({ azureCtx, uploads }: ToolDeps) => ({
             "Takes no arguments; reads the attached file itself.",
         inputSchema: z.object({}),
         outputSchema: computeCreateResultSchema,
-        execute: async () => handleCreateComputeFromSpec(azureCtx, uploads),
+        execute: async () => handleCreateCompute(azureCtx, uploads),
     }),
 });

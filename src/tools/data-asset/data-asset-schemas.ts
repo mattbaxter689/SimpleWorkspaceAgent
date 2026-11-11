@@ -26,9 +26,9 @@ export const createDataAssetResultSchema = z.object({
     created: z.boolean(),
     error: z.string().optional(),
     name: z.string().optional(),
-    note: z.string().optional()
-})
-export type CreateDataAssetResult = z.infer<typeof createDataAssetResultSchema>
+    note: z.string().optional(),
+});
+export type CreateDataAssetResult = z.infer<typeof createDataAssetResultSchema>;
 
 // Everything here is specific to creating a data asset in Azure
 export const dataSpecSchema = z

@@ -7,6 +7,7 @@ import { generateText, stepCountIs } from "ai";
 import { bodyLimit } from "hono/body-limit";
 import pino from "pino";
 
+import { gateCreateTools } from "./agent/prepare-step";
 import { buildSystemPrompt } from "./agent/system-prompt";
 import { envConfig } from "./config/env_config";
 import { getAzureClient } from "./credentials";
@@ -79,7 +80,8 @@ app.openapi(chatRoute, async (c) => {
         prompt: question + describeUploads(uploads),
         tools: tools,
         maxRetries: 3,
-        stopWhen: stepCountIs(15),
+        stopWhen: stepCountIs(20),
+        // prepareStep: gateCreateTools(Object.keys(tools)),
     });
 
     return c.json(

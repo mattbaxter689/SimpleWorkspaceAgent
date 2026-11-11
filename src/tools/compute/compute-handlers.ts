@@ -204,7 +204,7 @@ export async function handleRenameComputeInSpec(
     };
 }
 
-export async function handleCreateComputeFromSpec(
+export async function handleCreateCompute(
     ctx: AzureCtx,
     uploads: Uploads,
 ): Promise<ComputeCreateResult> {

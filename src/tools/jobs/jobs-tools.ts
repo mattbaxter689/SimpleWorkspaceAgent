@@ -22,7 +22,7 @@ export const createJobTools = ({ azureCtx }: ToolDeps) => ({
     getJobStatus: tool({
         description:
             "Get one job by its name (the job id, not the display name): status, type, experiment, compute, " +
-            "description and tags. To investigate a failure, follow up with getComputeStatus on the job's compute.",
+            "description and tags. To investigate a failure, you MUST follow up with getComputeStatus on the job's compute.",
         inputSchema: getJobSchema,
         outputSchema: jobSummarySchema,
         execute: (params) => handleGetJob(azureCtx, params),

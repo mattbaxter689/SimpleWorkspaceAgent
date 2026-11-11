@@ -3,10 +3,7 @@ import { z } from "zod";
 
 import type { ToolDeps } from "../types";
 import { handleGetLatestDataAsset, handleListDataAssets } from "./data-asset-handlers";
-import {
-    getLatestDataAssetSchema,
-    listDataAssetSchema,
-} from "./data-asset-schemas";
+import { getLatestDataAssetSchema, listDataAssetSchema } from "./data-asset-schemas";
 
 export const createDataAssetTools = ({ azureCtx }: ToolDeps) => ({
     listDataAssets: tool({
